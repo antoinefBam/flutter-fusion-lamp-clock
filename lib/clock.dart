@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lava_lamp_clock/clockDigit.dart';
 import 'package:lava_lamp_clock/lavaTime.dart';
-import 'package:lava_lamp_clock/separator.dart';
 
 class Clock extends StatefulWidget {
   Clock({Key key}) : super(key: key);
@@ -45,7 +44,7 @@ class _ClockState extends State<Clock> {
             title: 'h',
             color: Colors.lightBlue,
           ),
-          Separator(symbol: ':'),
+          SizedBox(width: 50),
           ClockDigit(
             digit: _now.minuteTens,
             title: 'M',

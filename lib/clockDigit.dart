@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lava_lamp_clock/lavaTime.dart';
 
-const DIGIT_HEIGHT = 50.0;
-const DIGIT_WIDTH = 50.0;
-const FONT_SIZE = 50.0;
+const ANIMATION_CONTAINER_HEIGHT = 300.0;
+const ANIMATION_CONTAINER_WIDTH = 45.0;
 
 class ClockDigit extends StatefulWidget {
   const ClockDigit({
@@ -51,36 +50,47 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: DIGIT_WIDTH,
-      height: DIGIT_HEIGHT,
-      alignment: Alignment.center,
-      child: Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          AnimatedBuilder(
-            animation: _animation,
-            builder: (_, child) {
-              return CustomPaint(
-                size: Size.infinite,
-                painter: DigitPainter(
-                  progress: _animation.value,
-                  color: widget.color,
-                  clearCanvas: _animation.isCompleted,
-                ),
-              );
-            },
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          child: Text(
+            widget.title,
+            style: Theme.of(context).textTheme.display1,
           ),
-          Text(
-            widget.digit.value.toString(),
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontFamily: 'CrimesceneAfterimage',
-              fontSize: FONT_SIZE,
+        ),
+        AnimatedContainer(
+          duration: Duration(milliseconds: 475),
+          curve: Curves.ease,
+          height: ANIMATION_CONTAINER_HEIGHT,
+          width: ANIMATION_CONTAINER_WIDTH,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            color: widget.color.withOpacity(0.2),
+          ),
+          margin: EdgeInsets.all(4),
+          child: Center(
+            child: AnimatedBuilder(
+              animation: _animation,
+              builder: (_, child) {
+                return CustomPaint(
+                  size: Size.infinite,
+                  painter: DigitPainter(
+                    progress: _animation.value,
+                    color: widget.color,
+                    backgroundColor: Theme.of(context).backgroundColor,
+                    clearCanvas: _animation.isCompleted,
+                  ),
+                );
+              },
             ),
           ),
-        ],
-      ),
+        ),
+        Text(
+          widget.digit.value.toString(),
+          style: TextStyle(fontSize: 30, color: widget.color),
+        ),
+      ],
     );
   }
 
@@ -106,24 +116,28 @@ class DigitPainter extends CustomPainter {
   DigitPainter({
     @required this.progress,
     @required this.color,
+    @required this.backgroundColor,
     this.clearCanvas = false,
   }) :
     assert(progress != null, 'progress is required'),
     assert(progress >= 0.0 && progress <= 1.0, 'progress is between 0 and 1'),
-    assert(color != null, 'color is required');
+    assert(color != null, 'color is required'),
+    assert(backgroundColor != null, 'backgroundColor is required');
 
   final double progress;
   final Color color;
+  final Color backgroundColor;
   final bool clearCanvas;
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawLine(
-      const Offset(DIGIT_WIDTH / 2, DIGIT_HEIGHT),
-      Offset(DIGIT_WIDTH / 2, (1.0 - progress) * DIGIT_HEIGHT),
+    canvas.drawRect(
+      Rect.fromPoints(
+        const Offset(ANIMATION_CONTAINER_WIDTH, ANIMATION_CONTAINER_HEIGHT),
+        Offset(0, (1.0 - progress) * ANIMATION_CONTAINER_HEIGHT),
+      ),
       Paint()
-        ..color = clearCanvas ? Colors.white : color
-        ..strokeWidth = FONT_SIZE,
+        ..color = clearCanvas ? backgroundColor : color
     );
   }
 
