@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:lava_lamp_clock/binaryTime.dart';
-import 'package:lava_lamp_clock/clockColumn.dart';
+import 'package:lava_lamp_clock/clockDigit.dart';
+import 'package:lava_lamp_clock/lavaTime.dart';
+import 'package:lava_lamp_clock/separator.dart';
 
 class Clock extends StatefulWidget {
   Clock({Key key}) : super(key: key);
@@ -12,14 +13,14 @@ class Clock extends StatefulWidget {
 }
 
 class _ClockState extends State<Clock> {
-  BinaryTime _now = BinaryTime();
+  LavaTime _now = LavaTime();
 
   // Tick the clock
   @override
   void initState() {
     Timer.periodic(Duration(seconds: 1), (_) {
       setState(() {
-        _now = BinaryTime();
+        _now = LavaTime();
       });
     });
     super.initState();
@@ -31,40 +32,25 @@ class _ClockState extends State<Clock> {
       padding: EdgeInsets.all(50),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Columns for the clock
-          ClockColumn(
-            binaryInteger: _now.hourTens,
-            title: 'H',
+          ClockDigit(
+            digit: _now.hourTens,
             color: Colors.blue,
-            rows: 2,
           ),
-          ClockColumn(
-            binaryInteger: _now.hourOnes,
-            title: 'h',
+          ClockDigit(
+            digit: _now.hourOnes,
             color: Colors.lightBlue,
           ),
-          ClockColumn(
-            binaryInteger: _now.minuteTens,
-            title: 'M',
+          Separator(symbol: ':'),
+          ClockDigit(
+            digit: _now.minuteTens,
             color: Colors.green,
-            rows: 3,
           ),
-          ClockColumn(
-            binaryInteger: _now.minuteOnes,
-            title: 'm',
+          ClockDigit(
+            digit: _now.minuteOnes,
             color: Colors.lightGreen,
-          ),
-          ClockColumn(
-            binaryInteger: _now.secondTens,
-            title: 'S',
-            color: Colors.pink,
-            rows: 3,
-          ),
-          ClockColumn(
-            binaryInteger: _now.secondOnes,
-            title: 's',
-            color: Colors.pinkAccent,
           ),
         ],
       ),
