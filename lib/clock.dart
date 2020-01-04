@@ -37,19 +37,23 @@ class _ClockState extends State<Clock> {
           // Columns for the clock
           ClockDigit(
             digit: _now.hourTens,
+            title: 'H',
             color: Colors.blue,
           ),
           ClockDigit(
             digit: _now.hourOnes,
+            title: 'h',
             color: Colors.lightBlue,
           ),
           Separator(symbol: ':'),
           ClockDigit(
             digit: _now.minuteTens,
+            title: 'M',
             color: Colors.green,
           ),
           ClockDigit(
             digit: _now.minuteOnes,
+            title: 'm',
             color: Colors.lightGreen,
           ),
         ],

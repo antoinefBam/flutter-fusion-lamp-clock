@@ -9,12 +9,16 @@ class ClockDigit extends StatefulWidget {
   const ClockDigit({
     Key key,
     @required this.digit,
-    this.color = Colors.black,
+    @required this.title,
+    @required this.color,
   }) : 
   assert(digit != null, 'digit is required'),
+  assert(title != null, 'title is required'),
+  assert(color != null, 'color is required'),
   super(key: key);
 
   final Digit digit;
+  final String title;
   final Color color;
 
   @override
