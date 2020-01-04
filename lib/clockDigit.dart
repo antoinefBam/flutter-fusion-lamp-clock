@@ -10,6 +10,8 @@ class ClockDigit extends StatefulWidget {
     @required this.digit,
     @required this.title,
     @required this.color,
+    this.textColor,
+    this.backgroundColor,
   }) : 
   assert(digit != null, 'digit is required'),
   assert(title != null, 'title is required'),
@@ -19,6 +21,8 @@ class ClockDigit extends StatefulWidget {
   final Digit digit;
   final String title;
   final Color color;
+  final Color textColor;
+  final Color backgroundColor;
 
   @override
   _ClockDigitState createState() => _ClockDigitState();
@@ -56,7 +60,7 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
         Container(
           child: Text(
             widget.title,
-            style: Theme.of(context).textTheme.display1,
+            style: Theme.of(context).textTheme.display1.copyWith(color: widget.textColor),
           ),
         ),
         AnimatedContainer(
@@ -78,7 +82,7 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
                   painter: DigitPainter(
                     progress: _animation.value,
                     color: widget.color,
-                    backgroundColor: Theme.of(context).backgroundColor,
+                    backgroundColor: widget.backgroundColor,
                     clearCanvas: _animation.isCompleted,
                   ),
                 );
