@@ -63,9 +63,7 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
             style: Theme.of(context).textTheme.display1.copyWith(color: widget.textColor),
           ),
         ),
-        AnimatedContainer(
-          duration: Duration(milliseconds: 475),
-          curve: Curves.ease,
+        Container(
           height: ANIMATION_CONTAINER_HEIGHT,
           width: ANIMATION_CONTAINER_WIDTH,
           decoration: BoxDecoration(
