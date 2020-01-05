@@ -3,6 +3,7 @@ import 'package:flutter/services.dart' show SystemChrome, DeviceOrientation;
 import 'package:lava_lamp_clock/clock.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeRight,
     DeviceOrientation.landscapeLeft,
