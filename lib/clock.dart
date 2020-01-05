@@ -64,7 +64,7 @@ class _ClockState extends State<Clock> {
       padding: EdgeInsets.all(50),
       color: colors[_Element.background],
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Columns for the clock

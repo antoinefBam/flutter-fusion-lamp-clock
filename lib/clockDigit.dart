@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lava_lamp_clock/lavaTime.dart';
 
-const ANIMATION_CONTAINER_HEIGHT = 300.0;
+const ANIMATION_CONTAINER_HEIGHT = 150.0;
 const ANIMATION_CONTAINER_WIDTH = 45.0;
 
 class ClockDigit extends StatefulWidget {
@@ -135,13 +135,16 @@ class DigitPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawRect(
-      Rect.fromPoints(
-        const Offset(ANIMATION_CONTAINER_WIDTH, ANIMATION_CONTAINER_HEIGHT),
-        Offset(0, (1.0 - progress) * ANIMATION_CONTAINER_HEIGHT),
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromPoints(
+          const Offset(ANIMATION_CONTAINER_WIDTH, ANIMATION_CONTAINER_HEIGHT),
+          Offset(0, (1.0 - progress) * ANIMATION_CONTAINER_HEIGHT),
+        ),
+        Radius.circular(5.0),
       ),
       Paint()
-        ..color = clearCanvas ? backgroundColor : color
+        ..color = clearCanvas ? backgroundColor : color,
     );
   }
 
