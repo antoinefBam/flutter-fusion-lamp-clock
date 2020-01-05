@@ -71,21 +71,19 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
             color: widget.color.withOpacity(0.2),
           ),
           margin: EdgeInsets.all(4),
-          child: Center(
-            child: AnimatedBuilder(
-              animation: _animation,
-              builder: (_, child) {
-                return CustomPaint(
-                  size: Size.infinite,
-                  painter: DigitPainter(
-                    progress: _animation.value,
-                    color: widget.color,
-                    backgroundColor: widget.backgroundColor,
-                    clearCanvas: _animation.isCompleted,
-                  ),
-                );
-              },
-            ),
+          child: AnimatedBuilder(
+            animation: _animation,
+            builder: (_, child) {
+              return CustomPaint(
+                size: Size.infinite,
+                painter: DigitPainter(
+                  progress: _animation.value,
+                  color: widget.color,
+                  backgroundColor: widget.backgroundColor,
+                  clearCanvas: _animation.isCompleted,
+                ),
+              );
+            },
           ),
         ),
         Text(
