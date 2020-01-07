@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lava_lamp_clock/lavaTime.dart';
+import 'package:lava_lamp_clock/painters/bubble.painter.dart';
+import 'package:lava_lamp_clock/painters/loader.painter.dart';
 
 const ANIMATION_CONTAINER_HEIGHT = 150.0;
 const ANIMATION_CONTAINER_WIDTH = 45.0;
@@ -29,8 +31,10 @@ class ClockDigit extends StatefulWidget {
 }
 
 class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
-  AnimationController _animationController;
-  Animation<double> _animation;
+  AnimationController _loaderAnimationController;
+  Animation<double> _loaderAnimation;
+  AnimationController _bubbleAnimationController;
+  Animation<double> _bubbleAnimation;
 
   @override
   void initState() {
@@ -41,14 +45,14 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
   @override
   void didUpdateWidget(ClockDigit oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.digit != widget.digit) {
+    if (oldWidget.digit.value != widget.digit.value) {
       _init();
     }
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _loaderAnimationController.dispose();
     super.dispose();
   }
 
@@ -71,19 +75,39 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
             color: widget.color.withOpacity(0.2),
           ),
           margin: EdgeInsets.all(4),
-          child: AnimatedBuilder(
-            animation: _animation,
-            builder: (_, child) {
-              return CustomPaint(
-                size: Size.infinite,
-                painter: DigitPainter(
-                  progress: _animation.value,
-                  color: widget.color,
-                  backgroundColor: widget.backgroundColor,
-                  clearCanvas: _animation.isCompleted,
+          child: Stack(
+            children: [
+              AnimatedBuilder(
+                animation: _loaderAnimation,
+                builder: (_, child) {
+                  return CustomPaint(
+                    size: Size.infinite,
+                    painter: LoaderPainter(
+                      progress: _loaderAnimation.value,
+                      color: widget.color,
+                      backgroundColor: widget.backgroundColor,
+                      clearCanvas: _loaderAnimation.isCompleted,
+                    ),
+                  );
+                },
+              ),
+              AnimatedBuilder(
+                animation: _bubbleAnimation,
+                builder: (_, child) {
+                  return CustomPaint(
+                    size: Size.infinite,
+                    painter: BubblePainter(
+                      progress: _bubbleAnimation.value,
+                      color: widget.color,
+                    ),
+                  );
+                },
+                child: CircleAvatar(
+                  backgroundColor: widget.color,
+                  radius: 5.0,
                 ),
-              );
-            },
+              ),
+            ],
           ),
         ),
         Text(
@@ -95,55 +119,32 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
   }
 
   void _init() {
-    _animationController = AnimationController(
+    _loaderAnimationController = AnimationController(
       duration: widget.digit.timeLeftBeforeDigitUpdate,
       vsync: this,
     );
+    _bubbleAnimationController = AnimationController(
+      duration: Duration(seconds: 5),
+      vsync: this,
+    );
 
-    _animation = Tween(begin: widget.digit.initialProgress, end: 1.0)
+    _loaderAnimation = Tween(begin: widget.digit.initialProgress, end: 1.0)
       .animate(
         CurvedAnimation(
-          parent: _animationController,
+          parent: _loaderAnimationController,
+          curve: Curves.linear,
+        ),
+      );
+    _bubbleAnimation = Tween(begin: 0.0, end: 1.0)
+      .animate(
+        CurvedAnimation(
+          parent: _bubbleAnimationController,
           curve: Curves.linear,
         ),
       );
 
-    _animationController.forward();
+    _loaderAnimationController.forward();
+    _bubbleAnimationController.forward();
   }
 }
 
-class DigitPainter extends CustomPainter {
-  DigitPainter({
-    @required this.progress,
-    @required this.color,
-    @required this.backgroundColor,
-    this.clearCanvas = false,
-  }) :
-    assert(progress != null, 'progress is required'),
-    assert(progress >= 0.0 && progress <= 1.0, 'progress is between 0 and 1'),
-    assert(color != null, 'color is required'),
-    assert(backgroundColor != null, 'backgroundColor is required');
-
-  final double progress;
-  final Color color;
-  final Color backgroundColor;
-  final bool clearCanvas;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromPoints(
-          const Offset(ANIMATION_CONTAINER_WIDTH, ANIMATION_CONTAINER_HEIGHT),
-          Offset(0, (1.0 - progress) * ANIMATION_CONTAINER_HEIGHT),
-        ),
-        Radius.circular(5.0),
-      ),
-      Paint()
-        ..color = clearCanvas ? backgroundColor : color,
-    );
-  }
-
-  @override
-  bool shouldRepaint(DigitPainter oldDelegate) => oldDelegate.progress != progress;
-}
