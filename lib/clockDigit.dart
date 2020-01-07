@@ -67,47 +67,49 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
             style: Theme.of(context).textTheme.display1.copyWith(color: widget.textColor),
           ),
         ),
-        Container(
-          height: ANIMATION_CONTAINER_HEIGHT,
-          width: ANIMATION_CONTAINER_WIDTH,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            color: widget.color.withOpacity(0.2),
-          ),
-          margin: EdgeInsets.all(4),
-          child: Stack(
-            children: [
-              AnimatedBuilder(
-                animation: _loaderAnimation,
-                builder: (_, child) {
-                  return CustomPaint(
-                    size: Size.infinite,
-                    painter: LoaderPainter(
-                      progress: _loaderAnimation.value,
-                      color: widget.color,
-                      backgroundColor: widget.backgroundColor,
-                      clearCanvas: _loaderAnimation.isCompleted,
+        ClipRRect(
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          child: Align(
+              alignment: Alignment.bottomRight,
+              child: Container(
+                height: ANIMATION_CONTAINER_HEIGHT,
+                width: ANIMATION_CONTAINER_WIDTH,
+                color: widget.color.withOpacity(0.2),
+                child: Stack(
+                  children: [
+                    AnimatedBuilder(
+                      animation: _loaderAnimation,
+                      builder: (_, child) {
+                        return CustomPaint(
+                          size: Size.infinite,
+                          painter: LoaderPainter(
+                            progress: _loaderAnimation.value,
+                            color: widget.color,
+                            backgroundColor: widget.backgroundColor,
+                            clearCanvas: _loaderAnimation.isCompleted,
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-              AnimatedBuilder(
-                animation: _bubbleAnimation,
-                builder: (_, child) {
-                  return CustomPaint(
-                    size: Size.infinite,
-                    painter: BubblePainter(
-                      progress: _bubbleAnimation.value,
-                      color: widget.color,
+                    AnimatedBuilder(
+                      animation: _bubbleAnimation,
+                      builder: (_, child) {
+                        return CustomPaint(
+                          size: Size.infinite,
+                          painter: BubblePainter(
+                            progress: _bubbleAnimation.value,
+                            color: widget.color,
+                          ),
+                        );
+                      },
+                      child: CircleAvatar(
+                        backgroundColor: widget.color,
+                        radius: 5.0,
+                      ),
                     ),
-                  );
-                },
-                child: CircleAvatar(
-                  backgroundColor: widget.color,
-                  radius: 5.0,
+                  ],
                 ),
-              ),
-            ],
+            ),
           ),
         ),
         Text(
