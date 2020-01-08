@@ -1,10 +1,37 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:lava_lamp_clock/lavaTime.dart';
 import 'package:lava_lamp_clock/painters/bubble.painter.dart';
 import 'package:lava_lamp_clock/painters/loader.painter.dart';
 
 const ANIMATION_CONTAINER_HEIGHT = 150.0;
-const ANIMATION_CONTAINER_WIDTH = 45.0;
+const ANIMATION_CONTAINER_WIDTH = 75.0;
+
+class Bubble {
+  final AnimationController animationController;
+  final double radius;
+  final Color color;
+  final Duration delay;
+  final double dx;
+  Animation<double> animation;
+
+  Bubble({
+    @required this.animationController,
+    @required this.radius,
+    @required this.color,
+    @required this.delay,
+    @required this.dx,
+  }) {
+    this.animation = Tween(begin: 0.0, end: 1.0)
+      .animate(
+        CurvedAnimation(
+          parent: animationController,
+          curve: Curves.linearToEaseOut,
+        ),
+      );
+  }
+}
 
 class ClockDigit extends StatefulWidget {
   const ClockDigit({
@@ -33,8 +60,7 @@ class ClockDigit extends StatefulWidget {
 class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
   AnimationController _loaderAnimationController;
   Animation<double> _loaderAnimation;
-  AnimationController _bubbleAnimationController;
-  Animation<double> _bubbleAnimation;
+  List<Bubble> _bubbles;
 
   @override
   void initState() {
@@ -53,6 +79,9 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
   @override
   void dispose() {
     _loaderAnimationController.dispose();
+    for (final bubble in _bubbles) {
+      bubble.animationController.dispose();
+    }
     super.dispose();
   }
 
@@ -91,21 +120,24 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
                         );
                       },
                     ),
-                    AnimatedBuilder(
-                      animation: _bubbleAnimation,
+                    ..._bubbles.map((bubble) => AnimatedBuilder(
+                      animation: bubble.animation,
                       builder: (_, child) {
                         return CustomPaint(
                           size: Size.infinite,
                           painter: BubblePainter(
-                            progress: _bubbleAnimation.value,
                             color: widget.color,
+                            radius: bubble.radius,
+                            dx: bubble.dx,
+                            dy: (1 - bubble.animation.value) * ANIMATION_CONTAINER_HEIGHT,
                           ),
                         );
                       },
                       child: CircleAvatar(
-                        backgroundColor: widget.color,
-                        radius: 5.0,
+                        backgroundColor: bubble.color,
+                        radius: bubble.radius,
                       ),
+                    ),
                     ),
                   ],
                 ),
@@ -125,11 +157,6 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
       duration: widget.digit.timeLeftBeforeDigitUpdate,
       vsync: this,
     );
-    _bubbleAnimationController = AnimationController(
-      duration: Duration(seconds: 5),
-      vsync: this,
-    );
-
     _loaderAnimation = Tween(begin: widget.digit.initialProgress, end: 1.0)
       .animate(
         CurvedAnimation(
@@ -137,16 +164,29 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
           curve: Curves.linear,
         ),
       );
-    _bubbleAnimation = Tween(begin: 0.0, end: 1.0)
-      .animate(
-        CurvedAnimation(
-          parent: _bubbleAnimationController,
-          curve: Curves.linear,
-        ),
-      );
 
-    _loaderAnimationController.forward();
-    _bubbleAnimationController.forward();
+    final randomNumberGenerator = Random();
+    final bubbleAnimationNumber = randomNumberGenerator.nextInt(15);
+    _bubbles = List.generate(
+      bubbleAnimationNumber,
+      (index) => Bubble(
+        animationController: AnimationController(
+          duration: Duration(seconds: (3 + randomNumberGenerator.nextInt(12))),
+          vsync: this,
+        ),
+        color: widget.color,
+        radius: (1.0 + randomNumberGenerator.nextDouble() * 9.0),
+        dx: (randomNumberGenerator.nextDouble() * ANIMATION_CONTAINER_WIDTH),
+        delay: Duration(seconds: randomNumberGenerator.nextInt(30)),
+      ),
+    );
+
+    _loaderAnimationController.forward().orCancel;
+    for (final bubble in _bubbles) {
+      Future.delayed(bubble.delay, () {
+        bubble.animationController.repeat().orCancel;
+      });
+    }
   }
 }
 
