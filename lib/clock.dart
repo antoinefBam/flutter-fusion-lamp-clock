@@ -74,6 +74,7 @@ class _ClockState extends State<Clock> {
             color: colors[_Element.color1],
             backgroundColor: colors[_Element.background],
             textColor: colors[_Element.text],
+            bubbleNumber: 3,
           ),
           ClockDigit(
             digit: _now.hourOnes,
@@ -81,6 +82,7 @@ class _ClockState extends State<Clock> {
             color: colors[_Element.color2],
             backgroundColor: colors[_Element.background],
             textColor: colors[_Element.text],
+            bubbleNumber: 5,
           ),
           SizedBox(width: 50),
           ClockDigit(
@@ -89,6 +91,7 @@ class _ClockState extends State<Clock> {
             color: colors[_Element.color3],
             backgroundColor: colors[_Element.background],
             textColor: colors[_Element.text],
+            bubbleNumber: 10,
           ),
           ClockDigit(
             digit: _now.minuteOnes,
@@ -96,6 +99,7 @@ class _ClockState extends State<Clock> {
             color: colors[_Element.color4],
             backgroundColor: colors[_Element.background],
             textColor: colors[_Element.text],
+            bubbleNumber: 15,
           ),
         ],
       ),

@@ -39,12 +39,16 @@ class ClockDigit extends StatefulWidget {
     @required this.digit,
     @required this.title,
     @required this.color,
-    this.textColor,
-    this.backgroundColor,
+    @required this.textColor,
+    @required this.backgroundColor,
+    @required this.bubbleNumber,
   }) : 
   assert(digit != null, 'digit is required'),
   assert(title != null, 'title is required'),
   assert(color != null, 'color is required'),
+  assert(textColor != null, 'textColor is required'),
+  assert(backgroundColor != null, 'backgroundColor is required'),
+  assert(bubbleNumber != null, 'bubbleNumber is required'),
   super(key: key);
 
   final Digit digit;
@@ -52,6 +56,7 @@ class ClockDigit extends StatefulWidget {
   final Color color;
   final Color textColor;
   final Color backgroundColor;
+  final int bubbleNumber;
 
   @override
   _ClockDigitState createState() => _ClockDigitState();
@@ -126,10 +131,10 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
                         return CustomPaint(
                           size: Size.infinite,
                           painter: BubblePainter(
-                            color: widget.color,
+                            color: bubble.color,
                             radius: bubble.radius,
                             dx: bubble.dx,
-                            dy: (1 - bubble.animation.value) * ANIMATION_CONTAINER_HEIGHT,
+                            dy: (1 - bubble.animation.value) * ANIMATION_CONTAINER_HEIGHT - bubble.radius,
                           ),
                         );
                       },
@@ -165,20 +170,9 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
         ),
       );
 
-    final randomNumberGenerator = Random();
-    final bubbleAnimationNumber = randomNumberGenerator.nextInt(15);
     _bubbles = List.generate(
-      bubbleAnimationNumber,
-      (index) => Bubble(
-        animationController: AnimationController(
-          duration: Duration(seconds: (3 + randomNumberGenerator.nextInt(12))),
-          vsync: this,
-        ),
-        color: widget.color,
-        radius: (1.0 + randomNumberGenerator.nextDouble() * 9.0),
-        dx: (randomNumberGenerator.nextDouble() * ANIMATION_CONTAINER_WIDTH),
-        delay: Duration(seconds: randomNumberGenerator.nextInt(30)),
-      ),
+      widget.bubbleNumber,
+      (_) => _initBubble(),
     );
 
     _loaderAnimationController.forward().orCancel;
@@ -188,5 +182,23 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
       });
     }
   }
+
+  Bubble _initBubble() {
+    final randomNumberGenerator = Random();
+    final radius = (1.0 + randomNumberGenerator.nextDouble() * 9.0);
+    final animationController = AnimationController(
+      duration: Duration(seconds: (3 + randomNumberGenerator.nextInt(12))),
+      vsync: this,
+    );
+    final dx = radius + randomNumberGenerator.nextDouble() * (ANIMATION_CONTAINER_WIDTH - radius);
+    final delay = Duration(seconds: randomNumberGenerator.nextInt(30));
+    return Bubble(
+      animationController: animationController,
+      color: widget.color,
+      radius: radius,
+      dx: dx,
+      delay: delay,
+    );
+  } 
 }
 
