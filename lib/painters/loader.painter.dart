@@ -20,16 +20,29 @@ class LoaderPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromPoints(
-          const Offset(ANIMATION_CONTAINER_WIDTH, ANIMATION_CONTAINER_HEIGHT),
-          Offset(0, (1.0 - progress) * ANIMATION_CONTAINER_HEIGHT),
-        ),
-        Radius.circular(5.0),
-      ),
-      Paint()
-        ..color = clearCanvas ? backgroundColor : color,
+    final path = Path();
+    final height = (1.0 - progress) * ANIMATION_CONTAINER_HEIGHT;
+    path.moveTo(ANIMATION_CONTAINER_WIDTH, ANIMATION_CONTAINER_HEIGHT);
+    path.lineTo(ANIMATION_CONTAINER_WIDTH, height);
+    path.quadraticBezierTo(
+      ANIMATION_CONTAINER_WIDTH * 3 / 4,
+      height - 5,
+      ANIMATION_CONTAINER_WIDTH / 2,
+      height,
+    );
+    path.quadraticBezierTo(
+      ANIMATION_CONTAINER_WIDTH / 4,
+      height + 5,
+      0.0,
+      height,
+    );
+    path.lineTo(0.0, ANIMATION_CONTAINER_HEIGHT);
+    path.close();
+
+    canvas.drawPath(
+      path, Paint()
+        ..color = clearCanvas ? backgroundColor : color
+        ..style = PaintingStyle.fill,
     );
   }
 
