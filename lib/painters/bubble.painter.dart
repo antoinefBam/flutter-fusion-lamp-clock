@@ -1,29 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:lava_lamp_clock/Bubble.dart';
 
 class BubblePainter extends CustomPainter {
   BubblePainter({
-    @required this.color,
-    @required this.radius,
-    @required this.dx,
+    @required this.bubble,
     @required this.dy,
   }) :
-    assert(color != null, 'color is required'),
-    assert(radius != null, 'radius is required'),
-    assert(dx != null, 'dx is required'),
+    assert(bubble != null, 'bubble is required'),
     assert(dy != null, 'dy is required');
 
-  final Color color;
-  final double radius;
-  final double dx;
+  final Bubble bubble;
   final double dy;
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawCircle(
-      Offset(dx, dy),
-      radius,
+      Offset(bubble.dx, dy),
+      bubble.radius,
        Paint()
-        ..color = color,
+        ..color = bubble.color,
     );
   }
 
