@@ -43,6 +43,8 @@ class ClockDigit extends StatefulWidget {
 class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
   AnimationController _loaderAnimationController;
   Animation<double> _loaderAnimation;
+  AnimationController _liquidSurfaceAnimationController;
+  Animation<double> _liquidSurfaceAnimation;
   List<Bubble> _bubbles;
 
   @override
@@ -62,6 +64,7 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
   @override
   void dispose() {
     _loaderAnimationController.dispose();
+    _liquidSurfaceAnimationController.dispose();
     for (final bubble in _bubbles) {
       bubble.animationController.dispose();
     }
@@ -92,14 +95,20 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
                     AnimatedBuilder(
                       animation: _loaderAnimation,
                       builder: (_, child) {
-                        return CustomPaint(
-                          size: Size.infinite,
-                          painter: LoaderPainter(
-                            progress: _loaderAnimation.value,
-                            color: widget.color,
-                            backgroundColor: widget.backgroundColor,
-                            clearCanvas: _loaderAnimation.isCompleted,
-                          ),
+                        return AnimatedBuilder(
+                          animation: _liquidSurfaceAnimation,
+                          builder: (_, child) {
+                            return CustomPaint(
+                              size: Size.infinite,
+                              painter: LoaderPainter(
+                                progress: _loaderAnimation.value,
+                                liquidSurface: _liquidSurfaceAnimation.value,
+                                color: widget.color,
+                                backgroundColor: widget.backgroundColor,
+                                clearCanvas: _loaderAnimation.isCompleted,
+                              ),
+                            );
+                          },
                         );
                       },
                     ),
@@ -148,6 +157,19 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
         ),
       );
     _loaderAnimationController.forward().orCancel;
+
+    _liquidSurfaceAnimationController = AnimationController(
+      duration: Duration(seconds: 3),
+      vsync: this,
+    );
+    _liquidSurfaceAnimation = Tween(begin: -7.0, end: 7.0)
+      .animate(
+        CurvedAnimation(
+          parent: _liquidSurfaceAnimationController,
+          curve: Curves.linear,
+        ),
+      );
+    _liquidSurfaceAnimationController.repeat(reverse: true).orCancel;
 
     _bubbles = [];
     final timer = Timer.periodic(Duration(seconds: 1), (_) {
