@@ -16,26 +16,23 @@ class ClockDigit extends StatefulWidget {
   const ClockDigit({
     Key key,
     @required this.digit,
-    @required this.title,
     @required this.color,
-    @required this.textColor,
     @required this.backgroundColor,
+    @required this.outlineColor,
     @required this.bubbleFrequency,
   }) : 
   assert(digit != null, 'digit is required'),
-  assert(title != null, 'title is required'),
   assert(color != null, 'color is required'),
-  assert(textColor != null, 'textColor is required'),
   assert(backgroundColor != null, 'backgroundColor is required'),
+  assert(outlineColor != null, 'outlineColor is required'),
   assert(bubbleFrequency != null, 'bubbleFrequency is required'),
   assert(bubbleFrequency >= 0 && bubbleFrequency <= 1, 'bubbleFrequency is between 0 and 1'),
   super(key: key);
 
   final Digit digit;
-  final String title;
   final Color color;
-  final Color textColor;
   final Color backgroundColor;
+  final Color outlineColor;
   final double bubbleFrequency;
 
   @override
@@ -135,6 +132,7 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
               size: Size.infinite,
               painter: DigitPainter(
                 digit: widget.digit.value,
+                color: widget.outlineColor,
               ),
             ),
           ),

@@ -15,11 +15,14 @@ import 'package:path_drawing/path_drawing.dart';
 class DigitPainter extends CustomPainter {
   DigitPainter({
     @required this.digit,
+    @required this.color,
   }) :
     assert(digit != null, 'digit is required'),
-    assert(digit >= 0 && digit <= 9, 'progress is between 0 and 9');
+    assert(digit >= 0 && digit <= 9, 'progress is between 0 and 9'),
+    assert(color != null, 'color is required');
 
   final int digit;
+  final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -63,7 +66,7 @@ class DigitPainter extends CustomPainter {
     canvas.drawPath(
       path.shift(Offset(-6.0, -6.0)),
       Paint()
-        ..color = Color(0xFF676767),
+        ..color = color,
     );
   }
 

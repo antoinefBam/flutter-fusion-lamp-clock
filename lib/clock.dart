@@ -6,32 +6,20 @@ import 'package:lava_lamp_clock/lavaTime.dart';
 
 enum _Element {
   background,
-  text,
-  shadow,
-  color1,
-  color2,
-  color3,
-  color4,
+  color,
+  outline,
 }
 
 final _lightTheme = {
-  _Element.background: Colors.white70,
-  _Element.text: Colors.black,
-  _Element.shadow: Colors.black87,
-  _Element.color1: Colors.blue,
-  _Element.color2: Colors.lightBlue,
-  _Element.color3: Colors.green,
-  _Element.color4: Colors.lightGreen,
+  _Element.background: Color(0xFFF1F3F6),
+  _Element.color: Color(0xFFEAA89A),
+  _Element.outline: Color(0xFF676767),
 };
 
 final _darkTheme = {
-  _Element.background: Colors.black87,
-  _Element.text: Colors.white,
-  _Element.shadow: Colors.white70,
-  _Element.color1: Colors.deepOrange,
-  _Element.color2: Colors.orange,
-  _Element.color3: Colors.deepPurple,
-  _Element.color4: Colors.purple,
+  _Element.background: Color(0xFF414141),
+  _Element.color: Color(0xFFC4C4C4),
+  _Element.outline: Color(0xFFFFFFFF),
 };
 
 class Clock extends StatefulWidget {
@@ -57,7 +45,7 @@ class _ClockState extends State<Clock> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).brightness == Brightness.light
+    final colors = Theme.of(context).brightness != Brightness.light
         ? _lightTheme
         : _darkTheme;
     return Container(
@@ -70,35 +58,31 @@ class _ClockState extends State<Clock> {
           // Columns for the clock
           ClockDigit(
             digit: _now.hourTens,
-            title: 'H',
-            color: colors[_Element.color1],
+            color: colors[_Element.color],
             backgroundColor: colors[_Element.background],
-            textColor: colors[_Element.text],
+            outlineColor: colors[_Element.outline],
             bubbleFrequency: 0.2,
           ),
           ClockDigit(
             digit: _now.hourOnes,
-            title: 'h',
-            color: colors[_Element.color2],
+            color: colors[_Element.color],
             backgroundColor: colors[_Element.background],
-            textColor: colors[_Element.text],
+            outlineColor: colors[_Element.outline],
             bubbleFrequency: 0.4,
           ),
           SizedBox(width: 25),
           ClockDigit(
             digit: _now.minuteTens,
-            title: 'M',
-            color: colors[_Element.color3],
+            color: colors[_Element.color],
             backgroundColor: colors[_Element.background],
-            textColor: colors[_Element.text],
+            outlineColor: colors[_Element.outline],
             bubbleFrequency: 0.6,
           ),
           ClockDigit(
             digit: _now.minuteOnes,
-            title: 'm',
-            color: colors[_Element.color4],
+            color: colors[_Element.color],
             backgroundColor: colors[_Element.background],
-            textColor: colors[_Element.text],
+            outlineColor: colors[_Element.outline],
             bubbleFrequency: 0.8,
           ),
         ],
