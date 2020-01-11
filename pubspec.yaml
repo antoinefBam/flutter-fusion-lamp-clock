@@ -25,6 +25,7 @@ dependencies:
   cupertino_icons: ^0.1.2
 
   flutter_svg: ^0.15.0
+  path_drawing: ^0.4.1
 
 dev_dependencies:
   flutter_test:
@@ -43,17 +44,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  assets:
-   - assets/digits/1.svg
-   - assets/digits/2.svg
-   - assets/digits/3.svg
-   - assets/digits/4.svg
-   - assets/digits/5.svg
-   - assets/digits/6.svg
-   - assets/digits/7.svg
-   - assets/digits/8.svg
-   - assets/digits/9.svg
-   - assets/digits/0.svg
+  # assets:
+  #  - assets/svg/mySvg.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
