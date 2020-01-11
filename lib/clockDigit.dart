@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lava_lamp_clock/Bubble.dart';
 import 'package:lava_lamp_clock/lavaTime.dart';
 import 'package:lava_lamp_clock/painters/bubble.painter.dart';
@@ -73,6 +74,7 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final String assetName = 'assets/digits/${widget.digit.value.toString()}.svg';
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -129,7 +131,12 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
                         backgroundColor: bubble.color,
                         radius: bubble.radius,
                       ),
-                    ),
+                    )),
+                    SvgPicture.asset(
+                      assetName,
+                      width: ANIMATION_CONTAINER_WIDTH,
+                      height: ANIMATION_CONTAINER_HEIGHT,
+                      fit: BoxFit.scaleDown,
                     ),
                   ],
                 ),
