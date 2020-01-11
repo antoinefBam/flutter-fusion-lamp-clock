@@ -84,7 +84,7 @@ class _ClockState extends State<Clock> {
             textColor: colors[_Element.text],
             bubbleFrequency: 0.4,
           ),
-          SizedBox(width: 50),
+          SizedBox(width: 25),
           ClockDigit(
             digit: _now.minuteTens,
             title: 'M',

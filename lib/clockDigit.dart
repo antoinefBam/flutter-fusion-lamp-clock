@@ -6,10 +6,11 @@ import 'package:lava_lamp_clock/Bubble.dart';
 import 'package:lava_lamp_clock/digitClipper.dart';
 import 'package:lava_lamp_clock/lavaTime.dart';
 import 'package:lava_lamp_clock/painters/bubble.painter.dart';
+import 'package:lava_lamp_clock/painters/digit.painter.dart';
 import 'package:lava_lamp_clock/painters/loader.painter.dart';
 
-const ANIMATION_CONTAINER_HEIGHT = 200.0;
-const ANIMATION_CONTAINER_WIDTH = 100.0;
+const ANIMATION_CONTAINER_HEIGHT = 183.0;
+const ANIMATION_CONTAINER_WIDTH = 113.0;
 
 class ClockDigit extends StatefulWidget {
   const ClockDigit({
@@ -75,55 +76,69 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ClipPath(
-        clipper: DigitClipper(widget.digit.value),
-        child: Container(
-          height: ANIMATION_CONTAINER_HEIGHT,
-          width: ANIMATION_CONTAINER_WIDTH,
-          color: widget.color.withOpacity(0.2),
-          child: Stack(
-            children: [
-              AnimatedBuilder(
-                animation: _loaderAnimation,
-                builder: (_, child) {
-                  return AnimatedBuilder(
-                    animation: _liquidSurfaceAnimation,
+      child: Stack(
+        children: <Widget>[
+          ClipPath(
+            clipper: DigitClipper(widget.digit.value),
+            child: Container(
+              height: ANIMATION_CONTAINER_HEIGHT,
+              width: ANIMATION_CONTAINER_WIDTH,
+              color: widget.color.withOpacity(0.2),
+              child: Stack(
+                children: [
+                  AnimatedBuilder(
+                    animation: _loaderAnimation,
                     builder: (_, child) {
+                      return AnimatedBuilder(
+                        animation: _liquidSurfaceAnimation,
+                        builder: (_, child) {
+                          return CustomPaint(
+                            size: Size.infinite,
+                            painter: LoaderPainter(
+                              progress: _loaderAnimation.value,
+                              liquidSurface: _liquidSurfaceAnimation.value,
+                              color: widget.color,
+                              backgroundColor: widget.backgroundColor,
+                              clearCanvas: _loaderAnimation.isCompleted,
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  ..._bubbles.map((bubble) => AnimatedBuilder(
+                    animation: bubble.animation,
+                    builder: (_, child) {
+                      bubble.animationController.forward();
+                      final dy = (1 - bubble.animation.value) * (ANIMATION_CONTAINER_HEIGHT + bubble.radius) - bubble.radius;
                       return CustomPaint(
                         size: Size.infinite,
-                        painter: LoaderPainter(
-                          progress: _loaderAnimation.value,
-                          liquidSurface: _liquidSurfaceAnimation.value,
-                          color: widget.color,
-                          backgroundColor: widget.backgroundColor,
-                          clearCanvas: _loaderAnimation.isCompleted,
+                        painter: BubblePainter(
+                          bubble: bubble,
+                          dy: dy,
                         ),
                       );
                     },
-                  );
-                },
-              ),
-              ..._bubbles.map((bubble) => AnimatedBuilder(
-                animation: bubble.animation,
-                builder: (_, child) {
-                  bubble.animationController.forward();
-                  final dy = (1 - bubble.animation.value) * (ANIMATION_CONTAINER_HEIGHT + bubble.radius) - bubble.radius;
-                  return CustomPaint(
-                    size: Size.infinite,
-                    painter: BubblePainter(
-                      bubble: bubble,
-                      dy: dy,
+                    child: CircleAvatar(
+                      backgroundColor: bubble.color,
+                      radius: bubble.radius,
                     ),
-                  );
-                },
-                child: CircleAvatar(
-                  backgroundColor: bubble.color,
-                  radius: bubble.radius,
-                ),
-              )),
-            ],
+                  )),
+                ],
+              ),
+            ),
           ),
-        ),
+          Container(
+            height: ANIMATION_CONTAINER_HEIGHT,
+            width: ANIMATION_CONTAINER_WIDTH,
+            child: CustomPaint(
+              size: Size.infinite,
+              painter: DigitPainter(
+                digit: widget.digit.value,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

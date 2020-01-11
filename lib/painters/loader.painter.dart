@@ -45,7 +45,6 @@ class LoaderPainter extends CustomPainter {
     canvas.drawPath(
       path, Paint()
         ..color = clearCanvas ? backgroundColor : color
-        ..style = PaintingStyle.fill,
     );
   }
 
