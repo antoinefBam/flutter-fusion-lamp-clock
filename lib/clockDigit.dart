@@ -9,6 +9,12 @@ import 'package:lava_lamp_clock/painters/bubble.painter.dart';
 import 'package:lava_lamp_clock/painters/outline.painter.dart';
 import 'package:lava_lamp_clock/painters/loader.painter.dart';
 
+const MIN_BUBBLE_RADIUS = 1.0;
+const MAX_BUBBLE_RADIUS = 8.0;
+
+const MIN_BUBBLE_DURATION = 6;
+const MAX_BUBBLE_DURATION = 18;
+
 class ClockDigit extends StatefulWidget {
   final Digit digit;
   final Color color;
@@ -182,9 +188,9 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
 
   Bubble _initBubble() {
     final randomNumberGenerator = Random();
-    final radius = (1.0 + randomNumberGenerator.nextDouble() * 7.0);
+    final radius = (MIN_BUBBLE_RADIUS + randomNumberGenerator.nextDouble() * (MAX_BUBBLE_RADIUS - MIN_BUBBLE_RADIUS));
     final animationController = AnimationController(
-      duration: Duration(seconds: (5 + randomNumberGenerator.nextInt(12))),
+      duration: Duration(seconds: (MIN_BUBBLE_DURATION + randomNumberGenerator.nextInt(MAX_BUBBLE_DURATION - MIN_BUBBLE_DURATION))),
       vsync: this,
     );
     final dx = radius + randomNumberGenerator.nextDouble() * (widget.digit.viewBox.width - radius);
