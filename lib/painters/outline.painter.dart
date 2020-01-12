@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class DigitOutlinePainter extends CustomPainter {
-  DigitOutlinePainter({
+class OutlinePainter extends CustomPainter {
+  OutlinePainter({
     @required this.path,
     @required this.color,
   }) :
@@ -14,7 +14,7 @@ class DigitOutlinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawPath(
-      path.shift(Offset(-6.0, -6.0)),
+      path.shift(Offset(-4.0, -4.0)),
       Paint()
         ..color = color
         ..style = PaintingStyle.stroke
@@ -23,5 +23,5 @@ class DigitOutlinePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(DigitOutlinePainter oldDelegate) => oldDelegate.path != path;
+  bool shouldRepaint(OutlinePainter oldDelegate) => oldDelegate.path != path;
 }

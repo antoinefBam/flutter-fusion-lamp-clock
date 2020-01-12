@@ -2,14 +2,20 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:lava_lamp_clock/Bubble.dart';
+import 'package:lava_lamp_clock/bubble.dart';
 import 'package:lava_lamp_clock/digit.dart';
 import 'package:lava_lamp_clock/digitClipper.dart';
 import 'package:lava_lamp_clock/painters/bubble.painter.dart';
-import 'package:lava_lamp_clock/painters/digitOutline.painter.dart';
+import 'package:lava_lamp_clock/painters/outline.painter.dart';
 import 'package:lava_lamp_clock/painters/loader.painter.dart';
 
 class ClockDigit extends StatefulWidget {
+  final Digit digit;
+  final Color color;
+  final Color backgroundColor;
+  final Color outlineColor;
+  final double bubbleFrequency;
+
   const ClockDigit({
     Key key,
     @required this.digit,
@@ -25,12 +31,6 @@ class ClockDigit extends StatefulWidget {
   assert(bubbleFrequency != null, 'bubbleFrequency is required'),
   assert(bubbleFrequency >= 0 && bubbleFrequency <= 1, 'bubbleFrequency is between 0 and 1'),
   super(key: key);
-
-  final Digit digit;
-  final Color color;
-  final Color backgroundColor;
-  final Color outlineColor;
-  final double bubbleFrequency;
 
   @override
   _ClockDigitState createState() => _ClockDigitState();
@@ -128,7 +128,7 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
               width: widget.digit.viewBox.width,
             child: CustomPaint(
               size: Size.infinite,
-              painter: DigitOutlinePainter(
+              painter: OutlinePainter(
                 path: widget.digit.path,
                 color: widget.outlineColor,
               ),
@@ -184,7 +184,7 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
     final randomNumberGenerator = Random();
     final radius = (1.0 + randomNumberGenerator.nextDouble() * 7.0);
     final animationController = AnimationController(
-      duration: Duration(seconds: (3 + randomNumberGenerator.nextInt(12))),
+      duration: Duration(seconds: (5 + randomNumberGenerator.nextInt(12))),
       vsync: this,
     );
     final dx = radius + randomNumberGenerator.nextDouble() * (widget.digit.viewBox.width - radius);

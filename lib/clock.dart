@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:lava_lamp_clock/clockDigit.dart';
+import 'package:lava_lamp_clock/clockSeparator.dart';
 import 'package:lava_lamp_clock/clockTime.dart';
 
 enum _Element {
@@ -49,10 +50,10 @@ class _ClockState extends State<Clock> {
         ? _lightTheme
         : _darkTheme;
     return Container(
-      padding: EdgeInsets.all(50),
+      padding: EdgeInsets.all(50.0),
       color: colors[_Element.background],
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Columns for the clock
@@ -70,7 +71,11 @@ class _ClockState extends State<Clock> {
             outlineColor: colors[_Element.outline],
             bubbleFrequency: 0.4,
           ),
-          SizedBox(width: 25),
+          ClockSeparator(
+            color: colors[_Element.color],
+            backgroundColor: colors[_Element.background],
+            outlineColor: colors[_Element.outline],
+          ),
           ClockDigit(
             digit: _now.minuteTens,
             color: colors[_Element.color],

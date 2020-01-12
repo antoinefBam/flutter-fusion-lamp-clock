@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lava_lamp_clock/Bubble.dart';
+import 'package:lava_lamp_clock/bubble.dart';
 
 class BubblePainter extends CustomPainter {
   BubblePainter({
