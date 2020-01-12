@@ -3,14 +3,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:lava_lamp_clock/Bubble.dart';
+import 'package:lava_lamp_clock/digit.dart';
 import 'package:lava_lamp_clock/digitClipper.dart';
-import 'package:lava_lamp_clock/lavaTime.dart';
 import 'package:lava_lamp_clock/painters/bubble.painter.dart';
-import 'package:lava_lamp_clock/painters/digit.painter.dart';
+import 'package:lava_lamp_clock/painters/digitOutline.painter.dart';
 import 'package:lava_lamp_clock/painters/loader.painter.dart';
-
-const ANIMATION_CONTAINER_HEIGHT = 183.0;
-const ANIMATION_CONTAINER_WIDTH = 113.0;
 
 class ClockDigit extends StatefulWidget {
   const ClockDigit({
@@ -76,10 +73,10 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
       child: Stack(
         children: <Widget>[
           ClipPath(
-            clipper: DigitClipper(widget.digit.value),
+            clipper: DigitClipper(widget.digit.path),
             child: Container(
-              height: ANIMATION_CONTAINER_HEIGHT,
-              width: ANIMATION_CONTAINER_WIDTH,
+              height: widget.digit.viewBox.height,
+              width: widget.digit.viewBox.width,
               color: widget.color.withOpacity(0.2),
               child: Stack(
                 children: [
@@ -97,6 +94,7 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
                               color: widget.color,
                               backgroundColor: widget.backgroundColor,
                               clearCanvas: _loaderAnimation.isCompleted,
+                              viewBox: widget.digit.viewBox,
                             ),
                           );
                         },
@@ -107,7 +105,7 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
                     animation: bubble.animation,
                     builder: (_, child) {
                       bubble.animationController.forward();
-                      final dy = (1 - bubble.animation.value) * (ANIMATION_CONTAINER_HEIGHT + bubble.radius) - bubble.radius;
+                      final dy = (1 - bubble.animation.value) * (widget.digit.viewBox.height + bubble.radius) - bubble.radius;
                       return CustomPaint(
                         size: Size.infinite,
                         painter: BubblePainter(
@@ -126,12 +124,12 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
             ),
           ),
           Container(
-            height: ANIMATION_CONTAINER_HEIGHT,
-            width: ANIMATION_CONTAINER_WIDTH,
+            height: widget.digit.viewBox.height,
+              width: widget.digit.viewBox.width,
             child: CustomPaint(
               size: Size.infinite,
-              painter: DigitPainter(
-                digit: widget.digit.value,
+              painter: DigitOutlinePainter(
+                path: widget.digit.path,
                 color: widget.outlineColor,
               ),
             ),
@@ -189,7 +187,7 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
       duration: Duration(seconds: (3 + randomNumberGenerator.nextInt(12))),
       vsync: this,
     );
-    final dx = radius + randomNumberGenerator.nextDouble() * (ANIMATION_CONTAINER_WIDTH - radius);
+    final dx = radius + randomNumberGenerator.nextDouble() * (widget.digit.viewBox.width - radius);
     return Bubble(
       animationController: animationController,
       color: widget.color,

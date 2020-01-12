@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:lava_lamp_clock/digit.dart';
 
 const COMMOM_DURATIONS = {
   'TEN_MINUTES': 10 * 60,
@@ -6,31 +6,14 @@ const COMMOM_DURATIONS = {
   'TEN_HOURS': 10 * 60 * 60,
 };
 
-class Digit {
-  int value;
-  Duration timeLeftBeforeDigitUpdate;
-  double initialProgress;
-
-  Digit({
-    @required this.value,
-    @required this.timeLeftBeforeDigitUpdate,
-    @required this.initialProgress
-  }) : 
-    assert(value != null, 'value is required'),
-    assert(value >= 0 && value <= 9, 'value is between 0 and 9'),
-    assert(timeLeftBeforeDigitUpdate != null, 'timeLeftBeforeDigitUpdate is required'),
-    assert(initialProgress != null, 'initialProgress is required'),
-    assert(initialProgress >= 0.0 && initialProgress <= 1.0, 'initialProgress is between 0 and 1');
-}
-
 /// Utility class to access clock digits
-class LavaTime {
+class ClockTime {
   Digit hourTens;
   Digit hourOnes;
   Digit minuteTens;
   Digit minuteOnes;
 
-  LavaTime() {
+  ClockTime() {
     DateTime now = DateTime.now();
 
     hourTens = Digit(

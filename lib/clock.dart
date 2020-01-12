@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:lava_lamp_clock/clockDigit.dart';
-import 'package:lava_lamp_clock/lavaTime.dart';
+import 'package:lava_lamp_clock/clockTime.dart';
 
 enum _Element {
   background,
@@ -30,14 +30,14 @@ class Clock extends StatefulWidget {
 }
 
 class _ClockState extends State<Clock> {
-  LavaTime _now = LavaTime();
+  ClockTime _now = ClockTime();
 
   // Tick the clock
   @override
   void initState() {
     Timer.periodic(Duration(seconds: 1), (_) {
       setState(() {
-        _now = LavaTime();
+        _now = ClockTime();
       });
     });
     super.initState();
@@ -45,7 +45,7 @@ class _ClockState extends State<Clock> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).brightness != Brightness.light
+    final colors = Theme.of(context).brightness == Brightness.light
         ? _lightTheme
         : _darkTheme;
     return Container(
