@@ -116,6 +116,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.1"
+  path_morph:
+    dependency: "direct main"
+    description:
+      name: path_morph
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   path_parsing:
     dependency: transitive
     description:

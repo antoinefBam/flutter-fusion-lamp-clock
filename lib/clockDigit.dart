@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:path_morph/path_morph.dart';
 import 'package:lava_lamp_clock/bubble.dart';
 import 'package:lava_lamp_clock/digit.dart';
 import 'package:lava_lamp_clock/digitClipper.dart';
@@ -49,10 +50,19 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
   Animation<double> _liquidSurfaceAnimation;
   List<Bubble> _bubbles;
 
+  SampledPathData data;
+  AnimationController controller;
+
   @override
   void initState() {
     _init();
     super.initState();
+  }
+
+  void func(int i, Offset z) {
+    setState((){
+      data.shiftedPoints[i] = z;
+    });
   }
 
   @override
@@ -70,77 +80,85 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
     for (final bubble in _bubbles) {
       bubble.animationController.dispose();
     }
+    controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Stack(
-        children: <Widget>[
-          ClipPath(
-            clipper: DigitClipper(widget.digit.path),
-            child: Container(
+      child: ClipRect(
+        clipper: DigitBoxClipper(widget.digit.viewBox),
+        child: Stack(
+          children: <Widget>[
+            ClipPath(
+              clipper: DigitClipper(
+                PathMorph.generatePath(data),
+              ),
+              child: AnimatedContainer(
+                duration: Duration(seconds: 2),
+                height: widget.digit.viewBox.height,
+                width: widget.digit.viewBox.width,
+                color: widget.color.withOpacity(0.2),
+                child: Stack(
+                  children: [
+                    AnimatedBuilder(
+                      animation: _loaderAnimation,
+                      builder: (_, child) {
+                        return AnimatedBuilder(
+                          animation: _liquidSurfaceAnimation,
+                          builder: (_, child) {
+                            return CustomPaint(
+                              size: Size.infinite,
+                              painter: LoaderPainter(
+                                progress: _loaderAnimation.value,
+                                liquidSurface: _liquidSurfaceAnimation.value,
+                                color: widget.color,
+                                backgroundColor: widget.backgroundColor,
+                                clearCanvas: _loaderAnimation.isCompleted,
+                                viewBox: widget.digit.viewBox,
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                    ..._bubbles.map((bubble) => AnimatedBuilder(
+                      animation: bubble.animation,
+                      builder: (_, child) {
+                        bubble.animationController.forward();
+                        final dy = (1 - bubble.animation.value) * (widget.digit.viewBox.height + bubble.radius) - bubble.radius;
+                        return CustomPaint(
+                          size: Size.infinite,
+                          painter: BubblePainter(
+                            bubble: bubble,
+                            dy: dy,
+                          ),
+                        );
+                      },
+                      child: CircleAvatar(
+                        backgroundColor: bubble.color,
+                        radius: bubble.radius,
+                      ),
+                    )),
+                  ],
+                ),
+              ),
+            ),
+            AnimatedContainer(
+              duration: Duration(seconds: 2),
               height: widget.digit.viewBox.height,
               width: widget.digit.viewBox.width,
-              color: widget.color.withOpacity(0.2),
-              child: Stack(
-                children: [
-                  AnimatedBuilder(
-                    animation: _loaderAnimation,
-                    builder: (_, child) {
-                      return AnimatedBuilder(
-                        animation: _liquidSurfaceAnimation,
-                        builder: (_, child) {
-                          return CustomPaint(
-                            size: Size.infinite,
-                            painter: LoaderPainter(
-                              progress: _loaderAnimation.value,
-                              liquidSurface: _liquidSurfaceAnimation.value,
-                              color: widget.color,
-                              backgroundColor: widget.backgroundColor,
-                              clearCanvas: _loaderAnimation.isCompleted,
-                              viewBox: widget.digit.viewBox,
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                  ..._bubbles.map((bubble) => AnimatedBuilder(
-                    animation: bubble.animation,
-                    builder: (_, child) {
-                      bubble.animationController.forward();
-                      final dy = (1 - bubble.animation.value) * (widget.digit.viewBox.height + bubble.radius) - bubble.radius;
-                      return CustomPaint(
-                        size: Size.infinite,
-                        painter: BubblePainter(
-                          bubble: bubble,
-                          dy: dy,
-                        ),
-                      );
-                    },
-                    child: CircleAvatar(
-                      backgroundColor: bubble.color,
-                      radius: bubble.radius,
-                    ),
-                  )),
-                ],
+              child: CustomPaint(
+                size: Size.infinite,
+                painter: OutlinePainter(
+                  path: PathMorph.generatePath(data),
+                  color: widget.outlineColor,
+                ),
               ),
             ),
-          ),
-          Container(
-            height: widget.digit.viewBox.height,
-              width: widget.digit.viewBox.width,
-            child: CustomPaint(
-              size: Size.infinite,
-              painter: OutlinePainter(
-                path: widget.digit.path,
-                color: widget.outlineColor,
-              ),
-            ),
-          ),
-        ],
+          ],  
+        ),
       ),
     );
   }
@@ -183,6 +201,14 @@ class _ClockDigitState extends State<ClockDigit> with TickerProviderStateMixin {
     });
     Future.delayed(widget.digit.timeLeftBeforeDigitUpdate, () {
       timer.cancel();
+    });
+
+    data = PathMorph.samplePaths(widget.digit.path, widget.digit.nextPath);
+    controller = AnimationController(vsync: this,
+        duration: Duration(seconds: 2));
+    PathMorph.generateAnimations(controller, data, func);
+    Future.delayed(widget.digit.timeLeftBeforeDigitUpdate - Duration(seconds: 2), () {
+      controller.forward();
     });
   }
 

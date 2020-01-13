@@ -1,4 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:lava_lamp_clock/digit.dart';
+
+class DigitBoxClipper extends CustomClipper<Rect> {
+  const DigitBoxClipper(this.viewBox);
+
+  final ViewBox viewBox;
+
+  @override
+  Rect getClip(Size size) => Rect.fromLTRB(-5.0, -5.0, viewBox.width + 5.0, viewBox.height + 5.0);
+
+  @override
+  bool shouldReclip(DigitBoxClipper oldClipper) => oldClipper.viewBox != viewBox;
+}
 
 class DigitClipper extends CustomClipper<Path> {
   const DigitClipper(this.path);
